@@ -47,39 +47,48 @@ Wrap the compiled templates into [IIFE](http://benalman.com/news/2010/11/immedia
 Type: `Boolean`
 Default value: `true`
 
-Prepend destination file with `runtime.js` library from Yate.
+Prepend destination file with `lib/runtime.js` library from Yate.
 
 ### Usage Examples
 
-#### Default Options
-In this example, the default options are used to do something with whatever. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result would be `Testing, 1 2 3.`
+When using default options all destination files will be wrapped into IIFE and each will
+be prepended by `lib/runtime.js` from Yate.
+
+Compile single file:
 
 ```js
 grunt.initConfig({
   yate: {
     options: {},
     files: {
-      'dest/default_options': ['src/testing', 'src/123'],
+      'templates/compiled/index.js': [
+        'templates/src/index.js',
+        'templates/src/blocks/*.js'
+      ],
     },
   },
-})
+});
 ```
 
-#### Custom Options
-In this example, custom options are used to do something else with whatever else. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result in this case would be `Testing: 1 2 3 !!!`
+Compile multiple files, using one to one mapping:
 
 ```js
 grunt.initConfig({
   yate: {
     options: {
-      separator: ': ',
-      punctuation: ' !!!',
+      runtime: false
     },
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
+    files: [
+      {
+        dest: 'templates/compiled/',
+        src: 'templates/src/*.yate',
+        ext: '.js',
+        expand: true,
+        flatten: true
+      }
+    ],
   },
-})
+});
 ```
 
 ## Contributing
