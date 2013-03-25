@@ -52,7 +52,7 @@ module.exports = function(grunt) {
       grunt.file.write(f.dest, src);
 
       // Print a success message.
-      grunt.log.writeln('File "' + f.dest + '" created.');
+      grunt.log.writeln('File ' + f.dest.cyan + ' created.');
     });
   });
 
@@ -61,7 +61,7 @@ module.exports = function(grunt) {
   }
 
   function iife(code) {
-    return '(function(){\n' + code + '\n})();\n';
+    return '(function(){\n' + code + '\n})()\n';
   }
 
   function autorun(code) {
