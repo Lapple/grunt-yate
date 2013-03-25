@@ -64,9 +64,9 @@ grunt.initConfig({
       'templates/compiled/index.js': [
         'templates/src/index.js',
         'templates/src/blocks/*.js'
-      ],
-    },
-  },
+      ]
+    }
+  }
 });
 ```
 
@@ -86,8 +86,8 @@ grunt.initConfig({
         expand: true,
         flatten: true
       }
-    ],
-  },
+    ]
+  }
 });
 ```
 
