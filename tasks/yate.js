@@ -11,6 +11,8 @@
 var yate = require('yate');
 var path = require('path');
 
+var yateFolder = path.dirname(require.resolve('yate'));
+
 module.exports = function(grunt) {
 
   grunt.registerMultiTask('yate', 'Yate compiler plugin', function() {
@@ -57,7 +59,7 @@ module.exports = function(grunt) {
   });
 
   function runtime(code) {
-    return grunt.file.read('node_modules/yate/lib/runtime.js') + '\n' + code;
+    return grunt.file.read(path.resolve(yateFolder, 'runtime.js')) + '\n' + code;
   }
 
   function iife(code) {
