@@ -1,0 +1,46 @@
+{
+  "name": "grunt-yate",
+  "description": "Yate compiler plugin",
+  "version": "0.0.1",
+  "homepage": "https://github.com/lapple/grunt-yate",
+  "author": {
+    "name": "lapple",
+    "email": "yuldoshev.aziz@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/lapple/grunt-yate.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lapple/grunt-yate/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/lapple/grunt-yate/blob/master/LICENSE-MIT"
+    }
+  ],
+  "main": "Gruntfile.js",
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "devDependencies": {
+    "grunt-contrib-jshint": "~0.1.1",
+    "grunt-contrib-clean": "~0.4.0",
+    "grunt-contrib-nodeunit": "~0.1.2",
+    "grunt": "~0.4.1"
+  },
+  "peerDependencies": {
+    "grunt": "~0.4.1",
+    "yate": ">=0.0.32"
+  },
+  "dependencies": {
+    "yate": ">=0.0.32"
+  },
+  "keywords": [
+    "gruntplugin"
+  ]
+}
