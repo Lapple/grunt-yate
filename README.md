@@ -37,17 +37,17 @@ grunt.initConfig({
 
 ### Options
 
-#### options.separator
-Type: `String`
-Default value: `',  '`
+#### options.iife
+Type: `Boolean`
+Default value: `true`
 
-A string value that is used to do something with whatever.
+Wrap the compiled templates into [IIFE](http://benalman.com/news/2010/11/immediately-invoked-function-expression/).
 
-#### options.punctuation
-Type: `String`
-Default value: `'.'`
+#### options.runtime
+Type: `Boolean`
+Default value: `true`
 
-A string value that is used to do something else with whatever else.
+Prepend destination file with `runtime.js` library from Yate.
 
 ### Usage Examples
 
