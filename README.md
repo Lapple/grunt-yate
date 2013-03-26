@@ -62,8 +62,8 @@ grunt.initConfig({
     options: {},
     files: {
       'templates/compiled/index.js': [
-        'templates/src/index.js',
-        'templates/src/blocks/*.js'
+        'templates/src/index.yate',
+        'templates/src/blocks/*.yate'
       ]
     }
   }
