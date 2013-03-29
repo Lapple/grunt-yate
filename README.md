@@ -13,7 +13,7 @@ npm install grunt-yate --save-dev
 
 One the plugin has been installed, it may be enabled inside your Gruntfile with this line of JavaScript:
 
-```js
+```javascript
 grunt.loadNpmTasks('grunt-yate');
 ```
 
@@ -22,7 +22,7 @@ grunt.loadNpmTasks('grunt-yate');
 ### Overview
 In your project's Gruntfile, add a section named `yate` to the data object passed into `grunt.initConfig()`.
 
-```js
+```javascript
 grunt.initConfig({
   yate: {
     options: {
@@ -47,16 +47,35 @@ Wrap the compiled templates into [IIFE](http://benalman.com/news/2010/11/immedia
 Type: `Boolean`
 Default value: `true`
 
-Prepend destination file with `lib/runtime.js` library from Yate.
+Prepend destination file with `runtime.js` library from [yate](https://github.com/pasaran/yate).
+
+#### options.postprocess
+Type: `Function`
+
+Define compiled code transformations. For instance, one can create autorunning templates:
+
+```javascript
+grunt.initConfig({
+  yate: {
+    options: {
+      postprocess: function(code) {
+        // Autorun the `main` module.
+        return code + '\nreturn function(data) { return yr.run("main", data); };';
+      }
+    }
+    // ...
+  }
+});
+```
 
 ### Usage Examples
 
-When using default options all destination files will be wrapped into IIFE and each will
-be prepended by `lib/runtime.js` from Yate.
+When using default options each destination file is wrapped into IIFE
+and prepended by `runtime.js`.
 
 Compile single file:
 
-```js
+```javascript
 grunt.initConfig({
   yate: {
     options: {},
@@ -70,9 +89,9 @@ grunt.initConfig({
 });
 ```
 
-Compile multiple files, using one to one mapping:
+Compile multiple files, using one-to-one mapping:
 
-```js
+```javascript
 grunt.initConfig({
   yate: {
     options: {
