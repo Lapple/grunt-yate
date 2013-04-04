@@ -18,9 +18,9 @@ module.exports = function(grunt) {
   grunt.registerMultiTask('yate', 'Yate compiler plugin', function() {
 
     var options = this.options({
-      runtime: true,
-      iife: true,
-      
+      runtime: false,
+      autorun: false,
+
       // Default no-op postprocess function. Use `postprocess`
       // to define custom compiled code transformations.
       postprocess: function(code) {
@@ -47,15 +47,16 @@ module.exports = function(grunt) {
         return yate.compile(filepath).js;
       }).join('\n');
 
-      src = options.postprocess(src);
 
       if (options.runtime) {
         src = runtime(src);
       }
 
-      if (options.iife) {
-        src = iife(src);
+      if (options.autorun) {
+        src = autorun(src, options.autorun);
       }
+
+      src = options.postprocess(src);
 
       // Write the destination file.
       grunt.file.write(f.dest, src);
@@ -67,6 +68,12 @@ module.exports = function(grunt) {
 
   function runtime(code) {
     return grunt.file.read(path.join(yateFolder, 'runtime.js')) + '\n' + code;
+  }
+
+  function autorun(code, module) {
+    var main = typeof module === 'string' ? module : 'main';
+
+    return iife(code + '\nreturn function(data) { return yr.run("' + main + '", data); };');
   }
 
   function iife(code) {

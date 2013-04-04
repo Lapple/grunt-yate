@@ -37,30 +37,31 @@ grunt.initConfig({
 
 ### Options
 
-#### options.iife
-Type: `Boolean`
-Default value: `true`
-
-Wrap the compiled templates into [IIFE](http://benalman.com/news/2010/11/immediately-invoked-function-expression/).
-
 #### options.runtime
 Type: `Boolean`
-Default value: `true`
+Default value: `false`
 
 Prepend destination file with `runtime.js` library from [yate](https://github.com/pasaran/yate).
+
+#### options.autorun
+Type: `Boolean|String`
+Default value: `false`
+
+Create autorunning templates. Pass `true` to automatically run `main` module. Pass
+a module title to autorun specific module.
 
 #### options.postprocess
 Type: `Function`
 
-Define compiled code transformations. For instance, one can create autorunning templates:
+Define compiled code transformation or extension.
 
 ```javascript
 grunt.initConfig({
   yate: {
     options: {
       postprocess: function(code) {
-        // Autorun the `main` module.
-        return code + '\nreturn function(data) { return yr.run("main", data); };';
+        // Example: augment particular strings at compile time:
+        return code.replace('{time}', Date.now());
       }
     }
     // ...
@@ -69,9 +70,6 @@ grunt.initConfig({
 ```
 
 ### Usage Examples
-
-When using default options each destination file is wrapped into IIFE
-and prepended by `runtime.js`.
 
 Compile single file:
 
