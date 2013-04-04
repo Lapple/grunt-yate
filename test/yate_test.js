@@ -27,11 +27,20 @@ exports.yate = {
     // setup here if necessary
     done();
   },
-  hello: function(test) {
+  simple: function(test) {
     test.expect(1);
 
-    var actual = grunt.file.read('tmp/hello.js');
-    var expected = grunt.file.read('test/expected/hello.js');
+    var actual = grunt.file.read('tmp/simple.js').trim();
+    var expected = grunt.file.read('test/expected/simple.js').trim();
+    test.equal(actual, expected);
+
+    test.done();
+  },
+  autorun: function(test) {
+    test.expect(1);
+
+    var actual = grunt.file.read('tmp/autorun.js').trim();
+    var expected = grunt.file.read('test/expected/autorun.js').trim();
     test.equal(actual, expected);
 
     test.done();

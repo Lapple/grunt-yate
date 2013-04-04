@@ -1,0 +1,3 @@
+match / {
+    <h1>Autoruns the main module!</h1>
+}

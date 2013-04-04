@@ -30,21 +30,18 @@ module.exports = function(grunt) {
 
     // Configuration to be run (and then tested).
     yate: {
-      sample: {
+      simple: {
         files: {
-          'tmp/hello.js': 'test/fixtures/hello.yate'
+          'tmp/simple.js': 'test/fixtures/simple.yate'
         }
       },
-      oneToOne: {
-        files: [
-          {
-            src: [ 'test/fixtures/multiple/*.yate' ],
-            dest: 'tmp/',
-            ext: '.js',
-            flatten: true,
-            expand: true
-          }
-        ]
+      autorun: {
+        options: {
+          autorun: true
+        },
+        files: {
+          'tmp/autorun.js': 'test/fixtures/autorun.yate'
+        }
       }
     },
 
