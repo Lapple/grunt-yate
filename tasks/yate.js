@@ -21,6 +21,10 @@ module.exports = function(grunt) {
       runtime: false,
       autorun: false,
 
+      // List of externals-containing files to be added to the compiled
+      // templates.
+      externals: [],
+
       // Default no-op postprocess function. Use `postprocess`
       // to define custom compiled code transformations.
       postprocess: function(code) {
@@ -47,10 +51,12 @@ module.exports = function(grunt) {
         return yate.compile(filepath).js;
       }).join('\n');
 
-
       if (options.runtime) {
         src = runtime(src);
       }
+
+      // It is important to append externals after runtime.
+      src = externals(src, options.externals);
 
       if (options.autorun) {
         src = autorun(src, options.autorun);
@@ -65,6 +71,12 @@ module.exports = function(grunt) {
       grunt.log.writeln('File ' + f.dest.cyan + ' created.');
     });
   });
+
+  function externals(code, externals) {
+    return [code].concat(grunt.file.expand(externals).map(function(path) {
+      return grunt.file.read(path);
+    })).join(grunt.util.linefeed);
+  }
 
   function runtime(code) {
     return grunt.file.read(path.join(yateFolder, 'runtime.js')) + '\n' + code;
