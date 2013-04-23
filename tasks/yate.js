@@ -15,6 +15,8 @@ var yateFolder = path.dirname(require.resolve('yate'));
 
 module.exports = function(grunt) {
 
+  var async = grunt.util.async;
+
   grunt.registerMultiTask('yate', 'Yate compiler plugin', function() {
 
     var options = this.options({
@@ -33,7 +35,7 @@ module.exports = function(grunt) {
     });
 
     // Iterate over all specified file groups.
-    this.files.forEach(function(f) {
+    async.forEachSeries(this.files, function(f, next) {
 
       // Building compiled templates.
       var src = f.src.filter(function(filepath) {
@@ -49,47 +51,53 @@ module.exports = function(grunt) {
 
       }).map(function(filepath) {
         return yate.compile(filepath).js;
-      }).join('\n');
+      }).join(grunt.util.linefeed);
 
+      // Building a list of files to prepend to the compiled template.
+      var includes = grunt.file.expand(options.externals);
+
+      // It is important to prepend externals with runtime.
       if (options.runtime) {
-        src = runtime(src);
+        includes.unshift(path.join(yateFolder, 'runtime.js'));
       }
 
-      // It is important to append externals after runtime.
-      src = externals(src, options.externals);
+      async.map(includes, readFile, function(err, scripts) {
+        if (err) {
+          grunt.log.warn(err);
+          return next(false);
+        }
 
-      if (options.autorun) {
-        src = autorun(src, options.autorun);
-      }
+        src = scripts.join(grunt.util.linefeed) + grunt.util.linefeed + src;
 
-      src = options.postprocess(src);
+        if (options.autorun) {
+          src = autorun(src, options.autorun);
+        }
 
-      // Write the destination file.
-      grunt.file.write(f.dest, src);
+        src = options.postprocess(src);
 
-      // Print a success message.
-      grunt.log.writeln('File ' + f.dest.cyan + ' created.');
-    });
+        // Write the destination file.
+        grunt.file.write(f.dest, src);
+
+        // Print a success message.
+        grunt.log.writeln('File ' + f.dest.cyan + ' created.');
+        next();
+      });
+
+    }, this.async());
   });
-
-  function externals(code, externals) {
-    return [code].concat(grunt.file.expand(externals).map(function(path) {
-      return grunt.file.read(path);
-    })).join(grunt.util.linefeed);
-  }
-
-  function runtime(code) {
-    return grunt.file.read(path.join(yateFolder, 'runtime.js')) + '\n' + code;
-  }
 
   function autorun(code, module) {
     var main = typeof module === 'string' ? module : 'main';
 
-    return iife(code + '\nreturn function(data) { return yr.run("' + main + '", data); };');
+    return iife(code + grunt.util.linefeed + 'return function(data) { return yr.run("' + main + '", data); };');
   }
 
   function iife(code) {
-    return '(function(){\n' + code + '\n})()\n';
+    return '(function(){' + grunt.util.linefeed + code + grunt.util.linefeed + '})()' + grunt.util.linefeed;
+  }
+
+  function readFile(path, callback) {
+    return require('fs').readFile(path, { encoding: 'utf8' }, callback);
   }
 
 };

@@ -50,6 +50,12 @@ Default value: `false`
 Create autorunning templates. Pass `true` to automatically run `main` module. Pass
 a module title to autorun specific module.
 
+#### options.externals
+Type: `String|Array`
+
+File pattern or array of patterns to load external functions from. Functions should be
+defined in `yr.externals` namespace.
+
 #### options.postprocess
 Type: `Function`
 

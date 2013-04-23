@@ -38,7 +38,10 @@ module.exports = function(grunt) {
       autorun: {
         options: {
           autorun: true,
-          externals: 'test/fixtures/externals.js'
+          runtime: true,
+          externals: [
+            'test/fixtures/externals.js'
+          ]
         },
         files: {
           'tmp/autorun.js': 'test/fixtures/autorun.yate'
