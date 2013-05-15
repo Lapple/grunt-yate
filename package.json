@@ -1,7 +1,7 @@
 {
   "name": "grunt-yate",
   "description": "Yate compiler plugin",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "homepage": "https://github.com/lapple/grunt-yate",
   "author": {
     "name": "lapple",
