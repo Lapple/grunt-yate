@@ -34,7 +34,8 @@ module.exports = function(grunt) {
       }
     });
 
-    var done = this.async();
+    // Error flag.
+    var failure = false;
 
     // Iterate over all specified file groups.
     async.forEachSeries(this.files, function(f, next) {
@@ -57,13 +58,18 @@ module.exports = function(grunt) {
         try {
           compiled = yate.compile(filepath).js;
         } catch(e) {
+          failure = true;
+
           grunt.event.emit('yate:error', e);
           grunt.fail.warn(e);
-          done();
         }
 
         return compiled;
       }).join(grunt.util.linefeed);
+
+      if (failure) {
+        return next();
+      }
 
       // Building a list of files to prepend to the compiled template.
       var includes = grunt.file.expand(options.externals);
@@ -95,7 +101,7 @@ module.exports = function(grunt) {
         next();
       });
 
-    }, done);
+    }, this.async());
   });
 
   function autorun(code, module) {
