@@ -50,7 +50,15 @@ module.exports = function(grunt) {
         }
 
       }).map(function(filepath) {
-        return yate.compile(filepath).js;
+        var compiled;
+
+        try {
+          compiled = yate.compile(filepath).js;
+        } catch(e) {
+          grunt.log.warn(e);
+        }
+
+        return compiled;
       }).join(grunt.util.linefeed);
 
       // Building a list of files to prepend to the compiled template.
