@@ -34,6 +34,8 @@ module.exports = function(grunt) {
       }
     });
 
+    var done = this.async();
+
     // Iterate over all specified file groups.
     async.forEachSeries(this.files, function(f, next) {
 
@@ -55,7 +57,9 @@ module.exports = function(grunt) {
         try {
           compiled = yate.compile(filepath).js;
         } catch(e) {
+          grunt.event.emit('yate:error', e);
           grunt.fail.warn(e);
+          done();
         }
 
         return compiled;
@@ -91,7 +95,7 @@ module.exports = function(grunt) {
         next();
       });
 
-    }, this.async());
+    }, done);
   });
 
   function autorun(code, module) {
