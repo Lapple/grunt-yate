@@ -55,7 +55,7 @@ module.exports = function(grunt) {
         try {
           compiled = yate.compile(filepath).js;
         } catch(e) {
-          grunt.log.warn(e);
+          grunt.fail.warn(e);
         }
 
         return compiled;
