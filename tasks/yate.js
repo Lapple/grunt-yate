@@ -8,8 +8,10 @@
 
 'use strict';
 
-var yate = require('yate');
 var path = require('path');
+var yate = require('yate');
+
+var TempFile = require('temporary/lib/file');
 
 var yateFolder = path.dirname(require.resolve('yate'));
 
@@ -22,6 +24,7 @@ module.exports = function(grunt) {
     var options = this.options({
       runtime: false,
       autorun: false,
+      modular: false,
 
       // List of externals-containing files to be added to the compiled
       // templates.
@@ -40,34 +43,35 @@ module.exports = function(grunt) {
     // Iterate over all specified file groups.
     async.forEachSeries(this.files, function(f, next) {
 
+      var temp = new TempFile();
+      var src;
+
       // Building compiled templates.
-      var src = f.src.filter(function(filepath) {
+      temp.writeFileSync(
+        f.src.filter(function(filepath) {
 
-        // Warn on and remove invalid source
-        // files (if nonull was set).
-        if (!grunt.file.exists(filepath)) {
-          grunt.log.warn('Source file "' + filepath + '" not found.');
-          return false;
-        } else {
-          return true;
-        }
+          // Warn on and remove invalid source
+          // files (if nonull was set).
+          if (!grunt.file.exists(filepath)) {
+            grunt.log.warn('Source file "' + filepath + '" not found.');
+            return false;
+          } else {
+            return true;
+          }
 
-      }).map(function(filepath) {
-        var compiled;
+        }).map(function(filepath) {
+          return 'include "' + path.resolve(filepath) + '"';
+        }).join(grunt.util.linefeed)
+      );
 
-        try {
-          compiled = yate.compile(filepath).js;
-        } catch(e) {
-          failure = true;
+      try {
+        src = yate.compile(temp.path).js;
+      } catch(e) {
+        grunt.event.emit('yate:error', e);
+        grunt.fail.warn(e);
 
-          grunt.event.emit('yate:error', e);
-          grunt.fail.warn(e);
-        }
+        temp.unlink();
 
-        return compiled;
-      }).join(grunt.util.linefeed);
-
-      if (failure) {
         return next();
       }
 
@@ -89,6 +93,8 @@ module.exports = function(grunt) {
 
         if (options.autorun) {
           src = autorun(src, options.autorun);
+        } else if (options.modular) {
+          src = modular(src);
         }
 
         src = options.postprocess(src);
@@ -98,6 +104,7 @@ module.exports = function(grunt) {
 
         // Print a success message.
         grunt.log.writeln('File ' + f.dest.cyan + ' created.');
+        temp.unlink();
         next();
       });
 
@@ -108,6 +115,10 @@ module.exports = function(grunt) {
     var main = typeof module === 'string' ? module : 'main';
 
     return iife(code + grunt.util.linefeed + 'return function(data) { return yr.run("' + main + '", data); };');
+  }
+
+  function modular(code) {
+    return iife(code + grunt.util.linefeed + 'module.exports = function(data) { return yr.run("main", data); };');
   }
 
   function iife(code) {

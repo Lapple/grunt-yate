@@ -50,6 +50,12 @@ Default value: `false`
 Create autorunning templates. Pass `true` to automatically run `main` module. Pass
 a module title to autorun specific module.
 
+#### options.modular
+Type: `Boolean`
+Default value: `false`
+
+`module.exports` main template function so that it can be required as a node module.
+
 #### options.externals
 Type: `String|Array`
 
