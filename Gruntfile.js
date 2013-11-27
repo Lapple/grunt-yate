@@ -38,6 +38,15 @@ module.exports = function(grunt) {
           ]
         }
       },
+      expansion: {
+        files: [{
+          src: 'test/fixtures/*.yate',
+          dest: 'tmp/',
+          ext: '.js',
+          expand: true,
+          flatten: true
+        }]
+      },
       autorun: {
         options: {
           autorun: true,

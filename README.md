@@ -89,11 +89,13 @@ Compile single file:
 grunt.initConfig({
   yate: {
     options: {},
-    files: {
-      'templates/compiled/index.js': [
-        'templates/src/index.yate',
-        'templates/src/blocks/*.yate'
-      ]
+    dist: {
+      files: {
+        'templates/compiled/index.js': [
+          'templates/src/index.yate',
+          'templates/src/blocks/*.yate'
+        ]
+      }
     }
   }
 });
@@ -107,15 +109,17 @@ grunt.initConfig({
     options: {
       runtime: false
     },
-    files: [
-      {
-        dest: 'templates/compiled/',
-        src: 'templates/src/*.yate',
-        ext: '.js',
-        expand: true,
-        flatten: true
-      }
-    ]
+    dist: {
+      files: [
+        {
+          dest: 'templates/compiled/',
+          src: 'templates/src/*.yate',
+          ext: '.js',
+          expand: true,
+          flatten: true
+        }
+      ]
+    }
   }
 });
 ```
