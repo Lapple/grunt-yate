@@ -49,6 +49,11 @@ module.exports = function(grunt) {
         files: {
           'tmp/autorun.js': 'test/fixtures/autorun.yate'
         }
+      },
+      modules: {
+        files: {
+          'tmp/modules.js': 'test/fixtures/first-module.yate'
+        }
       }
     },
 

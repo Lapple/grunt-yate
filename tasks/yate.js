@@ -43,34 +43,44 @@ module.exports = function(grunt) {
     // Iterate over all specified file groups.
     async.forEachSeries(this.files, function(f, next) {
 
-      var temp = new TempFile();
-      var src;
+      var src, tmp, templates;
 
-      // Building compiled templates.
-      temp.writeFileSync(
-        f.src.filter(function(filepath) {
+      // Warn on and remove invalid source files.
+      var files = f.src.filter(function(filepath) {
+        if (!grunt.file.exists(filepath)) {
+          grunt.log.warn('Source file "' + filepath + '" not found.');
+          return false;
+        } else {
+          return true;
+        }
+      });
 
-          // Warn on and remove invalid source
-          // files (if nonull was set).
-          if (!grunt.file.exists(filepath)) {
-            grunt.log.warn('Source file "' + filepath + '" not found.');
-            return false;
-          } else {
-            return true;
-          }
+      // Concatenates multiple source files by creating a temporary file,
+      // listing all the includes, e.g:
+      //
+      //     // temp.yate
+      //     include "a.yate"
+      //     include "b.yate"
+      //     include "c.yate"
+      //
+      // Compiles single source file right away.
+      if (files.length === 1) {
+        templates = files[0];
+      } else {
+        tmp = createTemporary(files);
+        templates = tmp.path;
+      }
 
-        }).map(function(filepath) {
-          return 'include "' + path.resolve(filepath) + '"';
-        }).join(grunt.util.linefeed)
-      );
+      yate.modules = {};
 
       try {
-        src = yate.compile(temp.path).js;
+        // Building compiled templates.
+        src = yate.compile(templates).js;
       } catch(e) {
         grunt.event.emit('yate:error', e);
         grunt.fail.warn(e);
 
-        temp.unlink();
+        tmp && tmp.unlink();
 
         return next();
       }
@@ -104,7 +114,7 @@ module.exports = function(grunt) {
 
         // Print a success message.
         grunt.log.writeln('File ' + f.dest.cyan + ' created.');
-        temp.unlink();
+        tmp && tmp.unlink();
         next();
       });
 
@@ -127,6 +137,18 @@ module.exports = function(grunt) {
 
   function readFile(path, callback) {
     return require('fs').readFile(path, { encoding: 'utf8' }, callback);
+  }
+
+  function createTemporary(files) {
+    var temp = new TempFile();
+
+    temp.writeFileSync(
+      files.map(function(filepath) {
+        return 'include "' + path.resolve(filepath) + '"';
+      }).join(grunt.util.linefeed)
+    );
+
+    return temp;
   }
 
 };

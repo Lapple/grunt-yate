@@ -1,0 +1,7 @@
+module 'second-module'
+
+match / {
+    <div>
+        "Second module"
+    </div>
+}
