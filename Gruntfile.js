@@ -34,7 +34,7 @@ module.exports = function(grunt) {
         files: {
           'tmp/simple.js': [
             'test/fixtures/simple.yate',
-            'test/fixtures/externals.yate'
+            'test/fixtures/autorun.yate'
           ]
         }
       },

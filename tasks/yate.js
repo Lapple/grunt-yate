@@ -144,8 +144,10 @@ module.exports = function(grunt) {
 
     temp.writeFileSync(
       files.map(function(filepath) {
-        return 'include "' + path.resolve(filepath) + '"';
-      }).join(grunt.util.linefeed)
+        // Yate won't follow Windows path delimiters.
+        return 'include "' + path.resolve(filepath).split(path.sep).join('/') + '"';
+      // Yate won't parse Windows linefeed.
+      }).join('\n')
     );
 
     return temp;
