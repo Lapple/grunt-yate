@@ -135,17 +135,14 @@ Use modules:
 YATE module:
 ```html
 module "module1"
-
 match .* module1-match1 {
 
 }
 ```
-
 YATE template:
 ```html
 module "tmpl1"
 import "module1"
-
 match / xb-button {
     apply .* module1-match1
 }
