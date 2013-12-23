@@ -152,7 +152,7 @@ match / xb-button {
 grunt.initConfig({
   yate: {
     options: {
-      modules: [
+      import: [
         'lib/**/*.yate.obj'
       ]
     },

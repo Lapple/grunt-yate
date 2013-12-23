@@ -30,7 +30,7 @@ module.exports = function(grunt) {
       // templates.
       externals: [],
 
-      modules: [],
+      import: [],
 
       // Default no-op postprocess function. Use `postprocess`
       // to define custom compiled code transformations.
@@ -76,7 +76,7 @@ module.exports = function(grunt) {
       yate.modules = {};
 
       // load modules
-      grunt.file.expand(options.modules).filter(function(filepath) {
+      grunt.file.expand(options.import).filter(function(filepath) {
         if (!grunt.file.exists(filepath)) {
           grunt.log.warn('Module file "' + filepath + '" not found.');
           return false;
