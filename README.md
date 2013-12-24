@@ -62,6 +62,11 @@ Type: `String|Array`
 File pattern or array of patterns to load external functions from. Functions should be
 defined in `yr.externals` namespace.
 
+#### options.modules
+Type: `Array`
+
+File pattern or array of patterns to load modules from.
+
 #### options.postprocess
 Type: `Function`
 
@@ -108,6 +113,48 @@ grunt.initConfig({
   yate: {
     options: {
       runtime: false
+    },
+    dist: {
+      files: [
+        {
+          dest: 'templates/compiled/',
+          src: 'templates/src/*.yate',
+          ext: '.js',
+          expand: true,
+          flatten: true
+        }
+      ]
+    }
+  }
+});
+```
+
+
+Use modules:
+
+YATE module:
+```html
+module "module1"
+match .* module1-match1 {
+
+}
+```
+YATE template:
+```html
+module "tmpl1"
+import "module1"
+match / xb-button {
+    apply .* module1-match1
+}
+```
+
+```javascript
+grunt.initConfig({
+  yate: {
+    options: {
+      import: [
+        'lib/**/*.yate.obj'
+      ]
     },
     dist: {
       files: [
