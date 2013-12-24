@@ -62,7 +62,7 @@ Type: `String|Array`
 File pattern or array of patterns to load external functions from. Functions should be
 defined in `yr.externals` namespace.
 
-#### options.modules
+#### options.import
 Type: `Array`
 
 File pattern or array of patterns to load modules from.
@@ -129,8 +129,7 @@ grunt.initConfig({
 });
 ```
 
-
-Use modules:
+#### Using imports
 
 YATE module:
 ```html

@@ -75,7 +75,7 @@ module.exports = function(grunt) {
 
       yate.modules = {};
 
-      // load modules
+      // Loading imported modules.
       grunt.file.expand(options.import).filter(function(filepath) {
         if (!grunt.file.exists(filepath)) {
           grunt.log.warn('Module file "' + filepath + '" not found.');
@@ -85,7 +85,7 @@ module.exports = function(grunt) {
         }
       }).forEach(function(filename) {
          var obj = grunt.file.readJSON(filename);
-         yate.modules[ obj.name ] = obj;
+         yate.modules[obj.name] = obj;
       });
 
       try {
