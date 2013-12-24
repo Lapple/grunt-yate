@@ -43,6 +43,11 @@ Default value: `false`
 
 Prepend destination file with `runtime.js` library from [yate](https://github.com/pasaran/yate).
 
+#### options.import
+Type: `Array`
+
+File pattern or array of patterns to load modules from.
+
 #### options.autorun
 Type: `Boolean|String`
 Default value: `false`
@@ -61,11 +66,6 @@ Type: `String|Array`
 
 File pattern or array of patterns to load external functions from. Functions should be
 defined in `yr.externals` namespace.
-
-#### options.import
-Type: `Array`
-
-File pattern or array of patterns to load modules from.
 
 #### options.postprocess
 Type: `Function`
