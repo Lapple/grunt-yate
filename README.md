@@ -86,6 +86,12 @@ grunt.initConfig({
 });
 ```
 
+#### options.writeAST
+Type: `Boolean`
+Default value: `false`
+
+Write parsed AST files at the location of templates. Should speed up builds as the parsing stage is skipped for unchanged files.
+
 ### Usage Examples
 
 Compile single file:

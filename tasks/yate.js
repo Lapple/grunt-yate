@@ -9,6 +9,7 @@
 'use strict';
 
 var path = require('path');
+var async = require('async');
 var yate = require('yate');
 
 var TempFile = require('temporary/lib/file');
@@ -17,20 +18,21 @@ var yateFolder = path.dirname(require.resolve('yate'));
 
 module.exports = function(grunt) {
 
-  var async = grunt.util.async;
-
   grunt.registerMultiTask('yate', 'Yate compiler plugin', function() {
 
     var options = this.options({
       runtime: false,
       autorun: false,
       modular: false,
+      writeAST: false,
 
       // List of externals-containing files to be added to the compiled
       // templates.
       externals: [],
 
+      // List of imported modules.
       import: [],
+
 
       // Default no-op postprocess function. Use `postprocess`
       // to define custom compiled code transformations.
@@ -39,11 +41,8 @@ module.exports = function(grunt) {
       }
     });
 
-    // Error flag.
-    var failure = false;
-
     // Iterate over all specified file groups.
-    async.forEachSeries(this.files, function(f, next) {
+    async.each(this.files, function(f, next) {
 
       var src, tmp, templates;
 
@@ -89,13 +88,17 @@ module.exports = function(grunt) {
       });
 
       try {
+        yate.cliOptions['write-ast'] = options.writeAST;
+
         // Building compiled templates.
         src = yate.compile(templates).js;
       } catch(e) {
         grunt.event.emit('yate:error', e);
         grunt.fail.warn(e);
 
-        tmp && tmp.unlink();
+        if (tmp) {
+          tmp.unlink();
+        }
 
         return next();
       }
@@ -129,7 +132,11 @@ module.exports = function(grunt) {
 
         // Print a success message.
         grunt.log.writeln('File ' + f.dest.cyan + ' created.');
-        tmp && tmp.unlink();
+
+        if (tmp) {
+          tmp.unlink();
+        }
+
         next();
       });
 

@@ -63,6 +63,14 @@ module.exports = function(grunt) {
         files: {
           'tmp/modules.js': 'test/fixtures/first-module.yate'
         }
+      },
+      writeAST: {
+        options: {
+          writeAST: true
+        },
+        files: {
+          'tmp/simple-ast.js': 'test/fixtures/simple.yate'
+        }
       }
     },
 

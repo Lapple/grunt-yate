@@ -11,6 +11,7 @@ var yr = yr || require('yate/lib/runtime.js');
     var scalar2attrvalue = yr.scalar2attrvalue;
     var xml2attrvalue = yr.xml2attrvalue;
     var scalar2xml = yr.scalar2xml;
+    var xml2scalar = yr.xml2scalar;
     var simpleScalar = yr.simpleScalar;
     var simpleBoolean = yr.simpleBoolean;
     var selectNametest = yr.selectNametest;
@@ -18,77 +19,77 @@ var yr = yr || require('yate/lib/runtime.js');
 
     var M = new yr.Module();
 
-    var j0 = [ ];
+    var j8 = [ ];
 
-    var j1 = [ 1, 0 ];
+    var j9 = [ 1, 0 ];
 
-    var j2 = [ 0, 'list' ];
+    var j10 = [ 0, 'list' ];
 
-    function p0(m, c0, i0, l0) {
+    function p1(m, c0, i0, l0) {
         return simpleBoolean('list', c0);
     }
 
-    var j3 = [ 2, p0 ];
+    var j11 = [ 2, p1 ];
 
-    var j4 = [ 0, 'path' ];
+    var j12 = [ 0, 'path' ];
 
     // match /
-    M.t0 = function t0(m, c0, i0, l0, a0) {
+    M.t7 = function t7(m, c0, i0, l0, a0) {
         var r0 = '';
 
         r0 += closeAttrs(a0);
-        r0 += '<h1>' + "hello world!" + '</h1>';
-        r0 += m.a(m, [ c0 ], 'list', a0);
+        r0 += "<h1>" + "hello world!" + "</h1>";
+        r0 += m.a(m, m.s(j9, c0), 'list', a0)
 
         return r0;
     };
-    M.t0.j = 1;
-    M.t0.a = 1;
+    M.t7.j = 1;
+    M.t7.a = 1;
 
     // match /[ .list ] : list
-    M.t1 = function t1(m, c0, i0, l0, a0) {
+    M.t8 = function t8(m, c0, i0, l0, a0) {
         var r0 = '';
 
         r0 += closeAttrs(a0);
-        r0 += '<ul';
+        r0 += "<ul";
         a0.a = {
         };
         a0.s = 'ul';
-        r0 += m.a(m, selectNametest('list', c0, []), '', a0);
+        r0 += m.a(m, selectNametest('list', c0, []), '', a0)
         r0 += closeAttrs(a0);
-        r0 += '</ul>';
+        r0 += "</ul>";
 
         return r0;
     };
-    M.t1.j = j3;
-    M.t1.a = 1;
+    M.t8.j = j11;
+    M.t8.a = 1;
 
     // match .list
-    M.t2 = function t2(m, c0, i0, l0, a0) {
+    M.t9 = function t9(m, c0, i0, l0, a0) {
         var r0 = '';
 
         r0 += closeAttrs(a0);
-        r0 += '<li>';
+        r0 += "<li>";
         r0 += "PATH: " + nodeset2xml( ( selectNametest('path', c0, []) ) );
-        r0 += '</li>';
+        r0 += "</li>";
 
         return r0;
     };
-    M.t2.j = j2;
-    M.t2.a = 0;
+    M.t9.j = j10;
+    M.t9.a = 0;
 
     M.matcher = {
         "": {
             "": [
-                "t0"
+                "t7"
             ],
             "list": [
-                "t2"
+                "t9"
             ]
         },
         "list": {
             "": [
-                "t1"
+                "t8"
             ]
         }
     };
