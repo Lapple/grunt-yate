@@ -35,10 +35,9 @@
   },
   "peerDependencies": {
     "grunt": "~0.4.1",
-    "yate": ">=0.0.32"
+    "yate": ">=0.0.72"
   },
   "dependencies": {
-    "yate": ">=0.0.32",
     "temporary": "0.0.5",
     "async": "~0.2.10"
   },
