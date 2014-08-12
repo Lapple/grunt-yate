@@ -87,11 +87,13 @@ module.exports = function(grunt) {
          yate.modules[obj.name] = obj;
       });
 
-      try {
-        yate.cliOptions['write-ast'] = options.writeAST;
+      var yate_options = {
+        'write-ast': options.writeAST
+      };
 
+      try {
         // Building compiled templates.
-        src = yate.compile(templates).js;
+        src = yate.compile(templates, yate_options).js;
       } catch(e) {
         grunt.event.emit('yate:error', e);
         grunt.fail.warn(e);
