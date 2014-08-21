@@ -9,7 +9,6 @@
 'use strict';
 
 var path = require('path');
-var async = require('async');
 var yate = require('yate');
 
 var TempFile = require('temporary/lib/file');
@@ -17,6 +16,7 @@ var TempFile = require('temporary/lib/file');
 var yateFolder = path.dirname(require.resolve('yate'));
 
 module.exports = function(grunt) {
+  var LF = grunt.util.linefeed;
 
   grunt.registerMultiTask('yate', 'Yate compiler plugin', function() {
 
@@ -33,7 +33,6 @@ module.exports = function(grunt) {
       // List of imported modules.
       import: [],
 
-
       // Default no-op postprocess function. Use `postprocess`
       // to define custom compiled code transformations.
       postprocess: function(code) {
@@ -42,7 +41,7 @@ module.exports = function(grunt) {
     });
 
     // Iterate over all specified file groups.
-    async.each(this.files, function(f, next) {
+    this.files.forEach(function(f) {
 
       var src, tmp, templates;
 
@@ -87,22 +86,19 @@ module.exports = function(grunt) {
          yate.modules[obj.name] = obj;
       });
 
-      var yate_options = {
+      var yateOptions = {
         'write-ast': options.writeAST
       };
 
       try {
         // Building compiled templates.
-        src = yate.compile(templates, yate_options).js;
+        src = yate.compile(templates, yateOptions).js;
       } catch(e) {
         grunt.event.emit('yate:error', e);
         grunt.fail.warn(e);
+        cleanup();
 
-        if (tmp) {
-          tmp.unlink();
-        }
-
-        return next();
+        return;
       }
 
       // Building a list of files to prepend to the compiled template.
@@ -113,54 +109,43 @@ module.exports = function(grunt) {
         includes.unshift(path.join(yateFolder, 'runtime.js'));
       }
 
-      async.map(includes, readFile, function(err, scripts) {
-        if (err) {
-          grunt.log.warn(err);
-          return next(false);
-        }
+      src = includes.map(grunt.file.read).join(LF) + LF + src;
 
-        src = scripts.join(grunt.util.linefeed) + grunt.util.linefeed + src;
+      if (options.autorun) {
+        src = autorun(src, options.autorun);
+      } else if (options.modular) {
+        src = modular(src);
+      }
 
-        if (options.autorun) {
-          src = autorun(src, options.autorun);
-        } else if (options.modular) {
-          src = modular(src);
-        }
+      src = options.postprocess(src);
 
-        src = options.postprocess(src);
+      // Write the destination file.
+      grunt.file.write(f.dest, src);
 
-        // Write the destination file.
-        grunt.file.write(f.dest, src);
+      // Print a success message.
+      grunt.log.writeln('File ' + f.dest.cyan + ' created.');
+      cleanup();
 
-        // Print a success message.
-        grunt.log.writeln('File ' + f.dest.cyan + ' created.');
-
+      function cleanup() {
         if (tmp) {
           tmp.unlink();
         }
-
-        next();
-      });
-
-    }, this.async());
+      }
+    });
   });
 
   function autorun(code, module) {
     var main = typeof module === 'string' ? module : 'main';
 
-    return iife(code + grunt.util.linefeed + 'return function(data) { return yr.run("' + main + '", data); };');
+    return iife(code + LF + 'return function(data) { return yr.run("' + main + '", data); };');
   }
 
   function modular(code) {
-    return iife(code + grunt.util.linefeed + 'module.exports = function(data) { return yr.run("main", data); };');
+    return iife(code + LF + 'module.exports = function(data) { return yr.run("main", data); };');
   }
 
   function iife(code) {
-    return '(function(){' + grunt.util.linefeed + code + grunt.util.linefeed + '})()' + grunt.util.linefeed;
-  }
-
-  function readFile(path, callback) {
-    return require('fs').readFile(path, { encoding: 'utf8' }, callback);
+    return '(function(){' + LF + code + LF + '})()' + LF;
   }
 
   function createTemporary(files) {
