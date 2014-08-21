@@ -1039,5 +1039,5 @@ var yr = yr || require('yate/lib/runtime.js');
     yr.register('main', M);
 
 })();
-return function(data) { return yr.run("main", data); };
+return function(data) { return yr.run("main", data, ""); };
 })()

@@ -49,11 +49,14 @@ Type: `Array`
 File pattern or array of patterns to load modules from.
 
 #### options.autorun
-Type: `Boolean|String`
+Type: `Boolean|String|Object`
 Default value: `false`
 
-Create autorunning templates. Pass `true` to automatically run `main` module. Pass
-a module title to autorun specific module.
+Create autorunning templates.
+
+- Pass `true` to automatically run `main` module.
+- Pass a string to autorun specific module.
+- Pass `{module: "moduleTitle", mode: "modeName"}` to specify both module and mode.
 
 #### options.modular
 Type: `Boolean`

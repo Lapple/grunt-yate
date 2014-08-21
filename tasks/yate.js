@@ -138,9 +138,18 @@ module.exports = function(grunt) {
     });
   });
 
-  function autorun(code, module) {
-    var main = typeof module === 'string' ? module : 'main';
-    var runExpression = util.format('return function(data) { return yr.run("%s", data); };', main);
+  function autorun(code, options) {
+    var params;
+
+    if (typeof options === 'boolean') {
+      params = { module: 'main', mode: '' };
+    } else if (typeof options === 'string') {
+      params = { module: options, mode: '' };
+    } else {
+      params = options;
+    }
+
+    var runExpression = util.format('return function(data) { return yr.run("%s", data, "%s"); };', params.module, params.mode);
 
     return iife(code + LF + runExpression);
   }
