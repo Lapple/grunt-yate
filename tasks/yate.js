@@ -41,6 +41,31 @@ module.exports = function(grunt) {
       }
     });
 
+    // Building a list of files to prepend to the compiled template.
+    var includes = grunt.file.expand(options.externals);
+
+    // It is important to prepend externals with runtime.
+    if (options.runtime) {
+      includes.unshift(path.join(yateFolder, 'runtime.js'));
+    }
+
+    var includedCode = includes.map(grunt.file.read).join(LF);
+
+    // Loading imported modules
+    yate.modules = {};
+
+    grunt.file.expand(options.import).filter(function(filepath) {
+      if (!grunt.file.exists(filepath)) {
+        grunt.log.warn(util.format('Module file "%s" not found.', filepath));
+        return false;
+      } else {
+        return true;
+      }
+    }).forEach(function(filename) {
+       var obj = grunt.file.readJSON(filename);
+       yate.modules[obj.name] = obj;
+    });
+
     // Iterate over all specified file groups.
     this.files.forEach(function(f) {
 
@@ -72,21 +97,6 @@ module.exports = function(grunt) {
         templates = tmp.path;
       }
 
-      yate.modules = {};
-
-      // Loading imported modules.
-      grunt.file.expand(options.import).filter(function(filepath) {
-        if (!grunt.file.exists(filepath)) {
-          grunt.log.warn(util.format('Module file "%s" not found.', filepath));
-          return false;
-        } else {
-          return true;
-        }
-      }).forEach(function(filename) {
-         var obj = grunt.file.readJSON(filename);
-         yate.modules[obj.name] = obj;
-      });
-
       var yateOptions = {
         'write-ast': options.writeAST
       };
@@ -102,15 +112,8 @@ module.exports = function(grunt) {
         return;
       }
 
-      // Building a list of files to prepend to the compiled template.
-      var includes = grunt.file.expand(options.externals);
-
-      // It is important to prepend externals with runtime.
-      if (options.runtime) {
-        includes.unshift(path.join(yateFolder, 'runtime.js'));
-      }
-
-      src = includes.map(grunt.file.read).join(LF) + LF + src;
+      // Prepend compiled templates with externals and runtime.
+      src = includedCode + LF + src;
 
       if (options.autorun) {
         src = autorun(src, options.autorun);
