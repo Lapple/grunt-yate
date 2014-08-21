@@ -8,9 +8,10 @@
 
 'use strict';
 
+var util = require('util');
 var path = require('path');
-var yate = require('yate');
 
+var yate = require('yate');
 var TempFile = require('temporary/lib/file');
 
 var yateFolder = path.dirname(require.resolve('yate'));
@@ -48,7 +49,7 @@ module.exports = function(grunt) {
       // Warn on and remove invalid source files.
       var files = f.src.filter(function(filepath) {
         if (!grunt.file.exists(filepath)) {
-          grunt.log.warn('Source file "' + filepath + '" not found.');
+          grunt.log.warn(util.format('Source file "%s" not found.', filepath));
           return false;
         } else {
           return true;
@@ -76,7 +77,7 @@ module.exports = function(grunt) {
       // Loading imported modules.
       grunt.file.expand(options.import).filter(function(filepath) {
         if (!grunt.file.exists(filepath)) {
-          grunt.log.warn('Module file "' + filepath + '" not found.');
+          grunt.log.warn(util.format('Module file "%s" not found.', filepath));
           return false;
         } else {
           return true;
@@ -123,7 +124,7 @@ module.exports = function(grunt) {
       grunt.file.write(f.dest, src);
 
       // Print a success message.
-      grunt.log.writeln('File ' + f.dest.cyan + ' created.');
+      grunt.log.writeln(util.format('File %s created.', f.dest.cyan));
       cleanup();
 
       function cleanup() {
@@ -136,8 +137,9 @@ module.exports = function(grunt) {
 
   function autorun(code, module) {
     var main = typeof module === 'string' ? module : 'main';
+    var runExpression = util.format('return function(data) { return yr.run("%s", data); };', main);
 
-    return iife(code + LF + 'return function(data) { return yr.run("' + main + '", data); };');
+    return iife(code + LF + runExpression);
   }
 
   function modular(code) {
@@ -154,7 +156,7 @@ module.exports = function(grunt) {
     temp.writeFileSync(
       files.map(function(filepath) {
         // Yate won't follow Windows path delimiters.
-        return 'include "' + path.resolve(filepath).split(path.sep).join('/') + '"';
+        return util.format('include "%s"', path.resolve(filepath).split(path.sep).join('/'));
       // Yate won't parse Windows linefeed.
       }).join('\n')
     );
