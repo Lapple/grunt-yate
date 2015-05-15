@@ -38,7 +38,7 @@
     "yate": ">=0.0.72"
   },
   "dependencies": {
-    "temporary": "0.0.5"
+    "temporary": "0.0.8"
   },
   "keywords": [
     "gruntplugin"
